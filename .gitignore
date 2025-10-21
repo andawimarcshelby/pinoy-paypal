@@ -4,12 +4,11 @@ Thumbs.db
 
 # ---- Backend (Laravel) ----
 backend/.env
-backend/.env.*
 backend/vendor/
 backend/node_modules/
 backend/public/storage
 
-# Ignore storage contents but keep their own .gitignore placeholders
+# Ignore storage contents but keep their .gitignore placeholders
 backend/storage/*.key
 backend/storage/app/*
 backend/storage/framework/cache/*
@@ -29,7 +28,7 @@ frontend/dist/
 frontend/.vite/
 frontend/.cache/
 frontend/.env
-frontend/.env.*
+frontend/.env.local
 
 # ---- Docker / misc ----
 **/*.pid

@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pinoy-backend
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      # Database defaults (we'll also set these in Laravel .env later)
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: pinoy_paypal
+      DB_USERNAME: ppk_user
+      DB_PASSWORD: ppk_pass
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+
+  frontend:
+    image: node:20-alpine
+    container_name: pinoy-frontend
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      VITE_HOST: "0.0.0.0"
+      VITE_PORT: "3000"
+    # Dev server for Vite; we'll add the /api proxy in vite.config later
+    command: sh -lc "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15-alpine
+    container_name: pinoy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pinoy_paypal
+      POSTGRES_USER: ppk_user
+      POSTGRES_PASSWORD: ppk_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    name: pinoy-net
